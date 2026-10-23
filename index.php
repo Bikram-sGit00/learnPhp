@@ -66,6 +66,29 @@
         echo "  ";
         $iterator++; 
     }
+
+    $it = 0;
+    do{
+        echo $langs[$it];
+        echo "  ";
+        $it++;
+
+    }while($it > count($langs)); // never true still c++ got printed we'll know why...
+
+    echo"<br>";
+    echo"For Loop";
+    echo"<br>";
+
+    for ($a = 0; $a < count($langs); $a++) { 
+        echo $langs[$a];
+        echo "  ";
+        
+    }
+
+    foreach($langs as $i){
+        echo $i;
+        echo " ";
+    }
     
     ?>
 </body>
