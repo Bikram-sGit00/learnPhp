@@ -28,6 +28,15 @@
     define('constVar', 3.12);
     // define("constVar", 3.12); can also use ""
     echo constVar;
+
+    echo"<br>";
+    echo "Arrays in PHP";
+    echo "<br>";
+
+    $langs = array("c++","Java", "Go");
+    echo "arr output :: ";
+    echo $langs[0];
+    echo $langs[2];
     
     ?>
 </body>
