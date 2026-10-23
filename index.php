@@ -30,13 +30,15 @@
     echo constVar;
 
     echo"<br>";
-    echo "Arrays in PHP";
+    echo "<h2>Arrays in PHP</h2>";
     echo "<br>";
 
     $langs = array("c++","Java", "Go");
     echo "arr output :: ";
     echo $langs[0];
     echo $langs[2];
+
+    echo count($langs); // count of items in arr;
     
     ?>
 </body>
