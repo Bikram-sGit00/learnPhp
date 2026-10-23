@@ -39,6 +39,33 @@
     echo $langs[2];
 
     echo count($langs); // count of items in arr;
+
+
+    
+    echo"<br>";
+    echo "<h2>Loops in PHP</h2>";
+    echo "<br>";
+
+    $a = 10;
+    while($a > 0){
+        echo $a;
+        echo " ";
+        $a--;
+    }
+
+    $i = count($langs) - 1;
+    while ($i >= 0) {
+        echo $langs[$i];
+        echo" ";
+        $i--;
+    }
+    echo "<br>";
+    $iterator = 0;
+    while($iterator < count($langs)){
+        echo $langs[$iterator];
+        echo "  ";
+        $iterator++; 
+    }
     
     ?>
 </body>
