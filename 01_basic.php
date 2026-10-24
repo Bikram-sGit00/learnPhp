@@ -89,6 +89,23 @@
         echo $i;
         echo " ";
     }
+
+    echo"<h2>Function in PHP</h2>";
+    function adder($n1, $n2){
+        return $n1 + $n2;
+    }
+
+    $num = adder(10, 10);
+    echo $num;
+
+
+    echo "<br>";
+    echo"<h2>strings in PHP</h2>";
+    echo "<br>";
+
+    $str = "testing string";
+    echo "output :" .strlen($str); // dot for concatenation
+
     
     ?>
 </body>
