@@ -105,6 +105,9 @@
 
     $str = "testing string";
     echo "output :" .strlen($str); // dot for concatenation
+    
+    echo "<br>";
+    echo strrev($str); // reverse 
 
     
     ?>
