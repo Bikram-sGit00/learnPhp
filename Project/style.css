@@ -1,66 +1,55 @@
-/* ---------- Design tokens: change these to re-theme the whole page ---------- */
+/* ---------- Design tokens: edit these to re-theme the page ---------- */
 :root {
-  --bg: #e9eef5;          /* page background, a cool light blue-grey */
+  --bg: #e8edf4;          /* page background */
   --surface: #ffffff;     /* form card */
   --ink: #1b2433;         /* main text */
-  --muted: #667085;       /* secondary text and placeholders */
-  --line: #d3dae6;        /* input borders */
-  --accent: #3550d6;      /* buttons, focus ring */
+  --muted: #667085;       /* legend and secondary text */
+  --line: #d3dae6;        /* borders */
+  --accent: #3550d6;      /* button, focus, selected pill */
   --accent-dark: #2a41b0; /* button hover */
   --danger: #c4302b;      /* error text and borders */
   --radius: 10px;
 }
 
-/* ---------- Base ---------- */
 *, *::before, *::after { box-sizing: border-box; }
 
+/* Flexbox on the body is what centers the form, both horizontally and vertically */
 body {
   margin: 0;
   min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 16px;
   background: var(--bg);
   color: var(--ink);
   font-family: "Figtree", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   line-height: 1.5;
 }
 
-/* Layout: intro on the left, card on the right; stacks on small screens */
-.page {
-  max-width: 1040px;
-  margin: 0 auto;
-  padding: 64px 24px;
-  display: grid;
-  grid-template-columns: 1fr 1.15fr;
-  gap: 64px;
-  align-items: center;
-  min-height: 100vh;
-}
-
-/* ---------- Intro ---------- */
-.intro h1 {
-  margin: 0 0 16px;
-  font-size: clamp(2rem, 4vw, 2.9rem);
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-  font-weight: 700;
-}
-
-.intro p {
-  margin: 0;
-  max-width: 38ch;      /* keeps the line length comfortable */
-  color: var(--muted);
-  font-size: 1.05rem;
-}
-
-/* ---------- Card ---------- */
-.card {
+/* ---------- The form card ---------- */
+form {
+  width: 100%;
+  max-width: 460px;
+  padding: 36px;
   background: var(--surface);
   border-radius: 16px;
-  padding: 36px;
-  box-shadow: 0 1px 2px rgba(27, 36, 51, 0.06), 0 12px 32px rgba(27, 36, 51, 0.08);
+  box-shadow: 0 1px 2px rgba(27, 36, 51, 0.06), 0 14px 36px rgba(27, 36, 51, 0.1);
+}
+
+h1 {
+  margin: 0 0 24px;
+  font-size: 1.6rem;
+  letter-spacing: -0.02em;
 }
 
 /* ---------- Fields ---------- */
-.field { margin-bottom: 20px; }
+.field {
+  margin: 0 0 18px;
+  padding: 0;
+  border: none;   /* removes the default fieldset border */
+  min-width: 0;
+}
 
 .row {
   display: grid;
@@ -68,19 +57,18 @@ body {
   gap: 16px;
 }
 
-label {
+label, legend {
   display: block;
   margin-bottom: 6px;
-  font-size: 0.92rem;
+  padding: 0;
+  font-size: 0.9rem;
   font-weight: 600;
 }
-
-.optional { font-weight: 400; color: var(--muted); }
 
 input[type="text"],
 input[type="email"],
 input[type="tel"],
-select,
+input[type="date"],
 textarea {
   width: 100%;
   padding: 11px 13px;
@@ -92,59 +80,64 @@ textarea {
   transition: border-color 0.15s, box-shadow 0.15s;
 }
 
-textarea { resize: vertical; min-height: 120px; }
+textarea { resize: vertical; min-height: 84px; }
 
-input::placeholder,
-textarea::placeholder { color: #98a2b3; }
-
-/* Visible focus state for keyboard and mouse users */
+/* Clear focus ring for keyboard and mouse users */
 input:focus,
-select:focus,
 textarea:focus {
   outline: none;
   border-color: var(--accent);
   box-shadow: 0 0 0 4px rgba(53, 80, 214, 0.15);
 }
 
-/* Invalid state, added by script.js */
-.invalid {
-  border-color: var(--danger) !important;
-}
+/* Added by script.js when a field fails validation */
+.invalid { border-color: var(--danger) !important; }
 
 .error {
-  margin: 6px 0 0;
-  min-height: 1.2em;     /* reserves space so the layout doesn't jump */
-  font-size: 0.85rem;
+  margin: 5px 0 0;
+  min-height: 1.2em;   /* reserves space so the form doesn't jump when errors appear */
+  font-size: 0.82rem;
   color: var(--danger);
 }
 
-/* Textarea footer: error on the left, counter on the right */
-.meta {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-}
-.counter {
-  margin-top: 6px;
-  font-size: 0.85rem;
-  color: var(--muted);
-  white-space: nowrap;
+/* ---------- Gender pills ---------- */
+.pills { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* Hide the real radio but keep it focusable for keyboard users */
+.pills input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
 }
 
-/* ---------- Checkbox ---------- */
-.check {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  column-gap: 10px;
-  align-items: start;
+.pills label {
+  margin: 0;
+  padding: 9px 18px;
+  font-weight: 500;
+  border: 1.5px solid var(--line);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
 }
-.check input { width: 18px; height: 18px; margin-top: 2px; accent-color: var(--accent); }
-.check label { margin: 0; font-weight: 400; }
-.check .error { grid-column: 2; }
 
-/* ---------- Buttons ---------- */
+.pills label:hover { border-color: var(--accent); }
+
+/* Selected pill */
+.pills input:checked + label {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+/* Keyboard focus on a pill */
+.pills input:focus-visible + label {
+  box-shadow: 0 0 0 4px rgba(53, 80, 214, 0.25);
+}
+
+/* ---------- Button ---------- */
 button {
   width: 100%;
+  margin-top: 6px;
   padding: 13px 18px;
   font: inherit;
   font-weight: 600;
@@ -158,35 +151,10 @@ button {
 button:hover { background: var(--accent-dark); }
 button:active { transform: translateY(1px); }
 button:focus-visible { outline: 3px solid rgba(53, 80, 214, 0.4); outline-offset: 2px; }
-button:disabled { opacity: 0.6; cursor: wait; }
-
-button.secondary {
-  color: var(--accent);
-  background: transparent;
-  border: 1.5px solid var(--line);
-}
-button.secondary:hover { background: #f3f5fb; }
-
-/* ---------- Success state ---------- */
-.success h2 { margin: 0 0 8px; font-size: 1.6rem; }
-.success p { margin: 0 0 24px; color: var(--muted); }
-.success[hidden] { display: none; }
-
-/* Helper for the screen-reader-only heading */
-.visually-hidden {
-  position: absolute;
-  width: 1px; height: 1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
-}
 
 /* ---------- Small screens ---------- */
-@media (max-width: 820px) {
-  .page { grid-template-columns: 1fr; gap: 32px; padding: 40px 20px; }
-  .card { padding: 26px 22px; }
-}
 @media (max-width: 480px) {
+  form { padding: 26px 20px; }
   .row { grid-template-columns: 1fr; gap: 0; }
 }
 
