@@ -1,104 +1,85 @@
-// Grab the elements we need once, up front
-const form = document.getElementById('contact-form');
-const submitBtn = document.getElementById('submit-btn');
-const resetBtn = document.getElementById('reset-btn');
-const successBox = document.getElementById('success');
-const message = document.getElementById('message');
-const counter = document.getElementById('counter');
+const form = document.getElementById('registration-form');
 
-// Each rule returns an error string, or '' if the field is fine.
-// Keeping rules in one object makes it easy to add or change fields later.
+// Each rule returns an error string, or '' when the field is fine
 const rules = {
-  name: (v) => (v.trim().length < 2 ? 'Please enter your full name.' : ''),
+  name: (v) => (v.trim().length < 2 ? 'Enter your full name.' : ''),
 
   email: (v) => {
-    if (!v.trim()) return 'Please enter your email address.';
-    // Simple pattern: something@something.something
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ? '' : 'That email address looks incomplete.';
+    if (!v.trim()) return 'Enter your email address.';
+    // Basic shape check: something@something.something
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ? '' : 'This email address looks incomplete.';
   },
 
   phone: (v) => {
-    // Optional field: only check it if the person typed something
-    if (!v.trim()) return '';
-    return /^[+\d][\d\s()-]{6,}$/.test(v) ? '' : 'Use digits only, with an optional + at the start.';
+    if (!v.trim()) return 'Enter your phone number.';
+    // Optional + at the start, then at least 6 digits (spaces, dashes and brackets allowed)
+    return /^\+?[\d\s()-]{6,}$/.test(v) ? '' : 'Use digits only, with an optional + at the start.';
   },
 
-  topic: (v) => (v ? '' : 'Pick a topic so I know where to start.'),
+  dob: (v) => {
+    if (!v) return 'Choose your date of birth.';
+    // A birth date in the future can't be right
+    return new Date(v) > new Date() ? 'Date of birth can\'t be in the future.' : '';
+  },
 
-  message: (v) => (v.trim().length < 10 ? 'Write at least 10 characters.' : ''),
-
-  consent: (_v, el) => (el.checked ? '' : 'Tick this box so I can reply to you.'),
+  address: (v) => (v.trim().length < 8 ? 'Enter your full address.' : ''),
 };
 
-// Validate one field and show or clear its error. Returns true if valid.
+// Radio group is checked separately because it's several inputs sharing one name
+function validateGender() {
+  const chosen = form.querySelector('input[name="gender"]:checked');
+  document.getElementById('gender-error').textContent = chosen ? '' : 'Select one option.';
+  return Boolean(chosen);
+}
+
+// Validate a single field, show or clear its error, and return true when valid
 function validateField(el) {
   const rule = rules[el.name];
   if (!rule) return true;
 
-  const error = rule(el.value, el);
+  const error = rule(el.value);
   document.getElementById(`${el.name}-error`).textContent = error;
   el.classList.toggle('invalid', Boolean(error));
-  el.setAttribute('aria-invalid', error ? 'true' : 'false');
   return !error;
 }
 
-// Check fields when the person leaves them, and re-check live once an error is showing
-form.querySelectorAll('input, select, textarea').forEach((el) => {
-  el.addEventListener('blur', () => validateField(el));
-  el.addEventListener('input', () => {
-    if (el.classList.contains('invalid')) validateField(el);
+// Check a field when the person leaves it, then re-check live while an error is showing
+form.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"], input[type="date"], textarea')
+  .forEach((el) => {
+    el.addEventListener('blur', () => validateField(el));
+    el.addEventListener('input', () => {
+      if (el.classList.contains('invalid')) validateField(el);
+    });
   });
+
+// Clear the gender error as soon as an option is picked
+form.querySelectorAll('input[name="gender"]').forEach((el) => {
+  el.addEventListener('change', validateGender);
 });
 
-// Live character counter for the message box
-message.addEventListener('input', () => {
-  counter.textContent = `${message.value.length} / ${message.maxLength}`;
-});
-
-form.addEventListener('submit', async (event) => {
+form.addEventListener('submit', (event) => {
   event.preventDefault(); // stop the page from reloading
 
-  // Validate everything, not just the last field touched
-  const fields = [...form.elements].filter((el) => el.name);
-  const results = fields.map(validateField);
+  // Run every check (not just until the first failure) so all errors show at once
+  const fieldResults = [...form.querySelectorAll('input[name], textarea')]
+    .filter((el) => el.type !== 'radio')
+    .map(validateField);
+  const genderValid = validateGender(); // called on its own so its error always shows
+  const allValid = !fieldResults.includes(false) && genderValid;
 
-  if (results.includes(false)) {
-    // Move focus to the first problem so keyboard users land on it
-    form.querySelector('.invalid').focus();
+  if (!allValid) {
+    // Send focus to the first field with a problem
+    const firstBad = form.querySelector('.invalid');
+    if (firstBad) firstBad.focus();
     return;
   }
 
-  // Disable the button so the form can't be sent twice
-  submitBtn.disabled = true;
-  submitBtn.textContent = 'Sending...';
-
+  // All good: collect the values as a plain object
   const data = Object.fromEntries(new FormData(form));
 
-  try {
-    // Replace this fake delay with a real request, for example:
-    // await fetch('/api/contact', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
-    await new Promise((resolve) => setTimeout(resolve, 900));
-    console.log('Form data:', data);
+  // Replace this with a real request when you have a backend, for example:
+  // fetch('/api/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+  console.log(data);
 
-    // Swap the form for the success message
-    document.getElementById('success-name').textContent = data.name.split(' ')[0];
-    document.getElementById('success-email').textContent = data.email;
-    form.hidden = true;
-    successBox.hidden = false;
-  } catch (err) {
-    alert('Something went wrong. Please try again.');
-  } finally {
-    submitBtn.disabled = false;
-    submitBtn.textContent = 'Send message';
-  }
-});
-
-// "Send another message" brings the empty form back
-resetBtn.addEventListener('click', () => {
   form.reset();
-  counter.textContent = `0 / ${message.maxLength}`;
-  form.querySelectorAll('.invalid').forEach((el) => el.classList.remove('invalid'));
-  form.querySelectorAll('.error').forEach((p) => (p.textContent = ''));
-  successBox.hidden = true;
-  form.hidden = false;
 });
