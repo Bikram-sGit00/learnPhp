@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Get in touch</title>
+  <title>Registration form</title>
 
-  <!-- Figtree from Google Fonts; the CSS has a system fallback if it fails to load -->
+  <!-- Figtree font; the CSS falls back to system fonts if it doesn't load -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -13,81 +13,62 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <main class="page">
 
-    <!-- Left side: short intro so the form has some context -->
-    <section class="intro">
-      <h1>Let's talk about your project</h1>
-      <p>Fill in the form and I'll reply within two working days. The more detail you give, the better my first answer will be.</p>
-    </section>
+  <!-- novalidate turns off the browser's default popups so script.js can show inline errors -->
+  <form id="registration-form" novalidate>
+    <h1>Registration</h1>
 
-    <!-- Right side: the form card -->
-    <section class="card" aria-labelledby="form-title">
-      <h2 id="form-title" class="visually-hidden">Contact form</h2>
+    <div class="field">
+      <label for="name">Full name</label>
+      <input type="text" id="name" name="name" autocomplete="name">
+      <p class="error" id="name-error"></p>
+    </div>
 
-      <!-- novalidate turns off the browser's default bubbles so script.js can show nicer inline errors -->
-      <form id="contact-form" novalidate>
+    <div class="field">
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" autocomplete="email">
+      <p class="error" id="email-error"></p>
+    </div>
 
-        <div class="field">
-          <label for="name">Full name</label>
-          <input type="text" id="name" name="name" autocomplete="name" placeholder="Jane Doe" required>
-          <p class="error" id="name-error" aria-live="polite"></p>
-        </div>
-
-        <div class="field">
-          <label for="email">Email address</label>
-          <input type="email" id="email" name="email" autocomplete="email" placeholder="jane@example.com" required>
-          <p class="error" id="email-error" aria-live="polite"></p>
-        </div>
-
-        <!-- Two fields side by side on wide screens -->
-        <div class="row">
-          <div class="field">
-            <label for="phone">Phone <span class="optional">(optional)</span></label>
-            <input type="tel" id="phone" name="phone" autocomplete="tel" placeholder="+91 98765 43210">
-            <p class="error" id="phone-error" aria-live="polite"></p>
-          </div>
-
-          <div class="field">
-            <label for="topic">What is this about?</label>
-            <select id="topic" name="topic" required>
-              <option value="" disabled selected>Choose one</option>
-              <option value="project">A new project</option>
-              <option value="job">A job opportunity</option>
-              <option value="feedback">Feedback</option>
-              <option value="other">Something else</option>
-            </select>
-            <p class="error" id="topic-error" aria-live="polite"></p>
-          </div>
-        </div>
-
-        <div class="field">
-          <label for="message">Message</label>
-          <textarea id="message" name="message" rows="5" maxlength="500" placeholder="Tell me a little about what you have in mind" required></textarea>
-          <div class="meta">
-            <p class="error" id="message-error" aria-live="polite"></p>
-            <span class="counter" id="counter">0 / 500</span>
-          </div>
-        </div>
-
-        <div class="field check">
-          <input type="checkbox" id="consent" name="consent" required>
-          <label for="consent">I'm okay with being contacted about this message</label>
-          <p class="error" id="consent-error" aria-live="polite"></p>
-        </div>
-
-        <button type="submit" id="submit-btn">Send message</button>
-      </form>
-
-      <!-- Shown by script.js after a successful submit -->
-      <div class="success" id="success" hidden>
-        <h2>Message sent</h2>
-        <p>Thanks, <span id="success-name"></span>. I'll get back to you at <strong id="success-email"></strong> soon.</p>
-        <button type="button" id="reset-btn" class="secondary">Send another message</button>
+    <!-- Phone and date of birth sit side by side on wider screens -->
+    <div class="row">
+      <div class="field">
+        <label for="phone">Phone</label>
+        <input type="tel" id="phone" name="phone" autocomplete="tel">
+        <p class="error" id="phone-error"></p>
       </div>
-    </section>
 
-  </main>
+      <div class="field">
+        <label for="dob">Date of birth</label>
+        <input type="date" id="dob" name="dob" autocomplete="bday">
+        <p class="error" id="dob-error"></p>
+      </div>
+    </div>
+
+    <!-- Radio buttons styled as pills; each input sits right before its label so CSS can style the checked one -->
+    <fieldset class="field">
+      <legend>Gender</legend>
+      <div class="pills">
+        <input type="radio" id="g-male" name="gender" value="male">
+        <label for="g-male">Male</label>
+
+        <input type="radio" id="g-female" name="gender" value="female">
+        <label for="g-female">Female</label>
+
+        <input type="radio" id="g-other" name="gender" value="other">
+        <label for="g-other">Other</label>
+      </div>
+      <p class="error" id="gender-error"></p>
+    </fieldset>
+
+    <div class="field">
+      <label for="address">Address</label>
+      <textarea id="address" name="address" rows="3" autocomplete="street-address"></textarea>
+      <p class="error" id="address-error"></p>
+    </div>
+
+    <button type="submit">Register</button>
+  </form>
 
   <script src="script.js"></script>
 </body>
