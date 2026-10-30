@@ -1,42 +1,52 @@
+
 <?php
+    $inserted = false;
+    // echo "PHP file loaded!<br>";
 
-    $server = "localhost";
-    $username = "root";
-    $password = "";
+    if(isset($_POST['name'])){
 
-    $con = mysqli_connect($server, $username, $password);
+        // echo "Form submitted!<br>";
 
-    if(!$con){
-        die("failure". mysqli_connect_error());
-    }
-    echo "Connection successful";
+        $server = "localhost";
+        $username = "root";
+        $password = "";
 
-    // Execute this block only after form submission
-    if($_SERVER['REQUEST_METHOD'] == 'POST'){
+        // Connect to the reg_from database
+        $con = mysqli_connect($server, $username, $password, "reg_from");
 
-        $name = $_POST['name'];
-        $email = $_POST['email'];
-        $phone = $_POST['phone'];
-        $dob = $_POST['dob'];
-        $gender = $_POST['gender'];
-        $address = $_POST['address'];
+        if(!$con){
+            die("Connection failed: " . mysqli_connect_error());
+        }
 
-        $sql = "INSERT INTO `details`.`details`
-                (`name`, `email`, `phone`, `dob`, `gender`, `address`, `stamp`)
+        // echo "Connection successful!<br>";
+
+        $name = $_POST['name'] ?? '';
+        $email = $_POST['email'] ?? '';
+        $phone = $_POST['phone'] ?? '';
+        $dob = $_POST['dob'] ?? '';
+        $gender = $_POST['gender'] ?? '';
+        $address = $_POST['address'] ?? '';
+
+        $sql = "INSERT INTO details
+                (name, email, phone, dob, gender, address, stamp)
                 VALUES
-                ('$name', '$email', '$phone', '$dob', '$gender', '$address', current_timestamp())";
+                ('$name', '$email', '$phone', '$dob', '$gender', '$address', CURRENT_TIMESTAMP())";
 
-        echo $sql;
+        // echo "Query: " . $sql . "<br>";
 
-    if($con->query($sql) == true){
-        echo"conformation from con";
-    }else{
-        echo"error: $sql <br> $con->error";
-    }
+        if($con->query($sql) == true){
+            // echo "Registration successful!";
+            $inserted = true;
+        }
+        else{
+            echo "MySQL Error: " . $con->error;
+        }
 
+        $con->close();
     }
 
 ?>
+
 
 
 <!DOCTYPE html>
@@ -55,10 +65,13 @@
 </head>
 <body>
 
-  <!-- novalidate turns off the browser's default popups so script.js can show inline errors -->
-  <form action="index.php" method="post" id="registration-form" novalidate>
+  <form action="index.php" method="post" id="registration-form">
     <h1>Registration</h1>
-
+    <?php
+      if($inserted == true){
+        echo "<h2>You're record was submitted successfully!</h2>";
+      }
+    ?>
     <div class="field">
       <label for="name">Full name</label>
       <input type="text" id="name" name="name" autocomplete="name">
